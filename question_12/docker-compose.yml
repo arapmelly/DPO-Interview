@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  index:
+    build: ./src
+    command: php index.php
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+
+  worker:
+    build: ./src
+    command: sh -c "php worker.php > /dev/null 2>&1 &"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"  # SMTP port
+      - "8025:8025"  # Web interface
